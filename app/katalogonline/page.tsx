@@ -9,6 +9,7 @@ import {
 	FaTimes,
 } from "react-icons/fa";
 
+// Define interface untuk Produk
 interface Product {
 	id: number;
 	title: string;
@@ -17,16 +18,19 @@ interface Product {
 	quota: number;
 }
 
+// State untuk produk dan keranjang
 export default function KatalogPage() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [cart, setCart] = useState<{ [id: number]: number }>({});
 	const [isCartOpen, setIsCartOpen] = useState(false);
 
+	// Fetch data produk dari API dan atur kuota produk
 	useEffect(() => {
 		fetch("https://fakestoreapi.com/products")
 			.then((res) => res.json())
-			.then((data: any[]) => {
-				const updated = data.map((item) => ({
+			.then((data) => {
+				// Map data dan atur kuota produk secara acak
+				const updated = data.map((item: any) => ({
 					...item,
 					quota: Math.floor(Math.random() * 5) + 1,
 				}));
@@ -34,6 +38,7 @@ export default function KatalogPage() {
 			});
 	}, []);
 
+	// Menambahkan produk ke keranjang
 	const handleAddToCart = (product: Product) => {
 		if (product.quota === 0) return;
 
@@ -49,6 +54,7 @@ export default function KatalogPage() {
 		);
 	};
 
+	// Menghapus atau mengurangi produk dari keranjang
 	const removeItem = (id: number) => {
 		const currentQty = cart[id];
 
@@ -77,6 +83,7 @@ export default function KatalogPage() {
 		}
 	};
 
+	// Menyiapkan item keranjang untuk ditampilkan
 	const cartItems = Object.entries(cart)
 		.map(([id, qty]) => {
 			const product = products.find((p) => p.id === Number(id));
