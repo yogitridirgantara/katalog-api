@@ -71,7 +71,7 @@ export default function KatalogPage() {
 			);
 		} else {
 			setCart((prev) => {
-				const { [id]: _, ...rest } = prev;
+				const { [id]: discarded, ...rest } = prev;
 				return rest;
 			});
 
