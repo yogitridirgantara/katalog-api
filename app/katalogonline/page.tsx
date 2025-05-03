@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import {
 	FaCartPlus,
-	FaCartArrowDown,
 	FaDollarSign,
 	FaShoppingCart,
 	FaTimes,
@@ -28,7 +28,7 @@ export default function KatalogPage() {
 			.then((data: any[]) => {
 				const updated = data.map((item) => ({
 					...item,
-					quota: Math.floor(Math.random() * 5) + 1, // Random quota 1–5
+					quota: Math.floor(Math.random() * 5) + 1,
 				}));
 				setProducts(updated);
 			});
@@ -37,13 +37,11 @@ export default function KatalogPage() {
 	const handleAddToCart = (product: Product) => {
 		if (product.quota === 0) return;
 
-		// Tambahkan atau tambah qty jika sudah ada
 		setCart((prev) => ({
 			...prev,
 			[product.id]: (prev[product.id] || 0) + 1,
 		}));
 
-		// Kurangi kuota produk
 		setProducts((prev) =>
 			prev.map((p) =>
 				p.id === product.id ? { ...p, quota: p.quota - 1 } : p
@@ -51,59 +49,26 @@ export default function KatalogPage() {
 		);
 	};
 
-	const handleRemoveFromCart = (product: Product) => {
-		setCart((prev) => {
-			const { [product.id]: _, ...rest } = prev;
-			return rest;
-		});
-
-		// Tambahkan kembali kuota
-		setProducts((prev) =>
-			prev.map((p) =>
-				p.id === product.id ? { ...p, quota: p.quota + 1 } : p
-			)
-		);
-	};
-
-	const updateQty = (id: number, newQty: number) => {
-		setCart((prev) => {
-			const currentQty = prev[id];
-			const diff = newQty - currentQty;
-
-			setProducts((products) =>
-				products.map((p) =>
-					p.id === id ? { ...p, quota: p.quota - diff } : p
-				)
-			);
-
-			return { ...prev, [id]: newQty };
-		});
-	};
-
 	const removeItem = (id: number) => {
 		const currentQty = cart[id];
 
 		if (currentQty > 1) {
-			// Kurangi qty jika lebih dari 1
 			setCart((prev) => ({
 				...prev,
 				[id]: currentQty - 1,
 			}));
 
-			// Kembalikan kuota produk
 			setProducts((prev) =>
 				prev.map((p) =>
 					p.id === id ? { ...p, quota: p.quota + 1 } : p
 				)
 			);
 		} else {
-			// Hapus produk jika qty = 1
 			setCart((prev) => {
 				const { [id]: _, ...rest } = prev;
 				return rest;
 			});
 
-			// Kembalikan kuota produk ke 1
 			setProducts((prev) =>
 				prev.map((p) =>
 					p.id === id ? { ...p, quota: p.quota + 1 } : p
@@ -129,45 +94,42 @@ export default function KatalogPage() {
 				}`}
 			>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-					{products.map((product) => {
-						const inCart = cart[product.id];
-						return (
-							<div
-								key={product.id}
-								className="border rounded-xl p-4 shadow-md"
+					{products.map((product) => (
+						<div
+							key={product.id}
+							className="border rounded-xl p-4 shadow-md"
+						>
+							<Image
+								src={product.image}
+								alt={product.title}
+								width={200}
+								height={200}
+								className="h-48 w-auto mx-auto object-contain"
+							/>
+							<h2 className="font-semibold mt-2 text-sm text-black">
+								{product.title}
+							</h2>
+							<p className="flex items-center text-green-600 mt-1">
+								<FaDollarSign className="mr-1" />{" "}
+								{product.price}
+							</p>
+							<p className="text-sm text-gray-500">
+								Kuota: {product.quota}
+							</p>
+							<button
+								disabled={product.quota === 0}
+								className={`mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white ${
+									product.quota === 0
+										? "bg-gray-400 cursor-not-allowed"
+										: "bg-blue-500 hover:bg-blue-600"
+								}`}
+								onClick={() => handleAddToCart(product)}
 							>
-								<img
-									src={product.image}
-									alt={product.title}
-									className="h-48 mx-auto"
-								/>
-								<h2 className="font-semibold mt-2 text-sm">
-									{product.title}
-								</h2>
-								<p className="flex items-center text-green-600 mt-1">
-									<FaDollarSign className="mr-1" />{" "}
-									{product.price}
-								</p>
-								<p className="text-sm text-gray-500">
-									Kuota: {product.quota}
-								</p>
-								<button
-									disabled={product.quota === 0}
-									className={`mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white ${
-										product.quota === 0
-											? "bg-gray-400 cursor-not-allowed"
-											: "bg-blue-500 hover:bg-blue-600"
-									}`}
-									onClick={() =>
-										handleAddToCart(product)
-									}
-								>
-									<FaCartPlus />
-									Add to Cart
-								</button>
-							</div>
-						);
-					})}
+								<FaCartPlus />
+								Add to Cart
+							</button>
+						</div>
+					))}
 				</div>
 
 				{/* Cart Icon */}
