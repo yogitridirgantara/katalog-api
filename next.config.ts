@@ -1,14 +1,9 @@
-import type { NextConfig } from "next";
+import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-	/* config options here */
-};
-
-export default nextConfig;
-
-// next.config.js
-module.exports = {
 	images: {
 		domains: ["fakestoreapi.com"],
 	},
 };
+
+export default nextConfig;

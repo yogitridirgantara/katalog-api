@@ -30,9 +30,9 @@ const HomePage = () => {
 				if (!response.ok) {
 					throw new Error("Gagal mengambil data produk");
 				}
-				const data = await response.json(); // Mengonversi response ke format JSON
+				const data: Product[] = await response.json(); // Mengonversi response ke format JSON dengan tipe yang benar
 				// Menyesuaikan struktur data yang diterima dengan tipe Product
-				const transformedProducts = data.map((product: any) => ({
+				const transformedProducts = data.map((product) => ({
 					id: product.id,
 					title: product.title,
 					description: product.description,
@@ -42,8 +42,12 @@ const HomePage = () => {
 					availability: "In Stock", // Mengatur ketersediaan produk (karena API tidak memberikan informasi ini)
 				}));
 				setProducts(transformedProducts); // Menyimpan data produk ke state
-			} catch (err: any) {
-				setError(err.message); // Menangani error jika ada masalah saat mengambil data
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					setError(err.message); // Menangani error jika ada masalah saat mengambil data
+				} else {
+					setError("Terjadi kesalahan yang tidak diketahui"); // Menangani error jika tipe error tidak sesuai
+				}
 			} finally {
 				setLoading(false); // Set loading ke false setelah proses selesai
 			}

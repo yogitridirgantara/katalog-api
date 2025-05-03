@@ -30,7 +30,7 @@ export default function KatalogPage() {
 			.then((res) => res.json())
 			.then((data) => {
 				// Map data dan atur kuota produk secara acak
-				const updated = data.map((item: any) => ({
+				const updated = data.map((item: Product) => ({
 					...item,
 					quota: Math.floor(Math.random() * 5) + 1,
 				}));
