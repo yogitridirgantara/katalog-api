@@ -71,7 +71,11 @@ export default function KatalogPage() {
 			);
 		} else {
 			setCart((prev) => {
-				const { [id]: discarded, ...rest } = prev;
+				const rest = Object.fromEntries(
+					Object.entries(prev).filter(
+						([key]) => Number(key) !== id
+					)
+				);
 				return rest;
 			});
 
